@@ -13,13 +13,22 @@ public class Main {
      */
     public static void main(String[] args) throws SQLException {
         //llamamos la función
-        
+
         listarRegistros();
 
-        
+        //INSERTAMOS nuevos registro
+        insertarRegistros("Hola desde JAVA, ESTOY LOCO", "Sebastían");
+        //listarRegistros();
+        //editar registro
+        //editarRegistros("Poder conectar la db con java me tiene muy feliz", "Sebastián", 3);
+        //eliminar registro
+        eliminarRegistros(1);
+        listarRegistros();
+
     }
-    
-    static void listarRegistros() throws SQLException{
+
+    //listar registros
+    static void listarRegistros() throws SQLException {
         Connection conectar = DriverManager.getConnection(
                 "jdbc:mysql://localhost/mensajes_bd?serverTimezone=UTC",
                 "root",
@@ -39,9 +48,8 @@ public class Main {
             String mensaje = rs.getString("mensaje");
             String autor = rs.getString("autor");
             String fecha = rs.getString("fecha");
-            
+
             //para mostrar los resultados por pantalla
-            
             System.out.printf("%d %s %s %s\n", id, mensaje, autor, fecha);
         }
 
@@ -49,7 +57,74 @@ public class Main {
         rs.close();
         ps.close();
         conectar.close();
-        
+
     }
 
+    //insertar registros
+    static void insertarRegistros(String mensaje, String autor) throws SQLException {
+        Connection conectar = DriverManager.getConnection(
+                "jdbc:mysql://localhost/mensajes_bd?serverTimezone=UTC",
+                "root",
+                "seba12345OTEIZA");
+
+        //mando a imprimir este mensaje para saber si la conexion se realizó con éxito
+        System.out.println("Conexion correcta");
+
+        //recuperar
+        String sql = "INSERT INTO mensajes(mensaje, autor, fecha) VALUE(?,?, current_time())"; //
+        PreparedStatement ps = conectar.prepareStatement(sql); //realizo la consulta, preparo la consulta
+        ps.setString(1, mensaje);//ese 1 corresponde al primer ? que está en VALUE
+        ps.setString(2, autor);//ese 2 cprresopnde al segundo ? que está en VALUE
+        ps.executeUpdate(); //ejecutar la actualización, la insersión. Lo que hace es ejecutar e insertar el dato para actualizar la tabla
+
+        //cerrar las conexiones
+        ps.close();
+        conectar.close();
+
+    }
+
+    static void editarRegistros(String mensaje, String autor, int id) throws SQLException {
+        Connection conectar = DriverManager.getConnection(
+                "jdbc:mysql://localhost/mensajes_bd?serverTimezone=UTC",
+                "root",
+                "seba12345OTEIZA");
+
+        //mando a imprimir este mensaje para saber si la conexion se realizó con éxito
+        System.out.println("Conexion correcta");
+
+        //recuperar
+        String sql = "UPDATE mensajes SET mensaje=?, autor=? WHERE id_mensaje = ?"; //
+        PreparedStatement ps = conectar.prepareStatement(sql); //realizo la consulta, preparo la consulta
+        ps.setString(1, mensaje);//ese 1 corresponde al primer ? que está en VALUE
+        ps.setString(2, autor);//ese 2 cprresopnde al segundo ? que está en VALUE
+        ps.setInt(3, id);
+        ps.executeUpdate(); //ejecutar la actualización, la insersión. Lo que hace es ejecutar e insertar el dato para actualizar la tabla
+
+        //cerrar las conexiones
+        ps.close();
+        conectar.close();
+
+    }
+
+    static void eliminarRegistros(int id) throws SQLException {
+        Connection conectar = DriverManager.getConnection(
+                "jdbc:mysql://localhost/mensajes_bd?serverTimezone=UTC",
+                "root",
+                "seba12345OTEIZA");
+
+        //mando a imprimir este mensaje para saber si la conexion se realizó con éxito
+        System.out.println("Conexion correcta");
+
+        //recuperar
+        String sql = "DELETE FROM mensajes WHERE id_mensajes = ? "; //
+        PreparedStatement ps = conectar.prepareStatement(sql); //realizo la consulta, preparo la consulta
+
+        ps.setInt(1, id);
+        ps.executeUpdate(); 
+
+        //cerrar las conexiones
+        ps.close();
+        conectar.close();
+
+    }
 }
